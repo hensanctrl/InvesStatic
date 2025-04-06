@@ -73,6 +73,7 @@ class DatabaseOperations:
 
                         group_name=""
                         df = pd.read_excel(xls, sheet_name=sheet_name, skiprows=6)
+                        group_name=""
                         for index, row in df.iterrows():
                             # 如果第1,2列数据为空，且第3列数据不为空，则第3列数据赋值给小组名
                             if pd.isna(row[0]) and pd.isna(row[5]) and pd.notna(row[2]):

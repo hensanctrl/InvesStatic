@@ -13,7 +13,7 @@ import random
 
 
 class RevitToDB:
-    
+
     def __init__(self):        
         self.root = tk.Tk()
         self.root.title("BIM构件清单赋工程量")
@@ -47,7 +47,7 @@ class RevitToDB:
         self.textQ_label.pack()
         self.textQ = tk.Entry(self.root, width=50, bg='white')
         self.textQ.pack()
-
+   
         self.textQ2_label = tk.Label(self.root, text="本次拟分配工程量:", bg='white')
         self.textQ2_label.pack()
         self.textQ2 = tk.Entry(self.root, width=50, bg='white')
@@ -59,7 +59,7 @@ class RevitToDB:
         # 增加一组Radio控件，用于选择赋工程量的方式，包括“按面积”、“按体积”和“自定义”
         self.selected = tk.StringVar()  # 默认选中按面积      
         self.selected.set("面积")  # 设置默认值
-
+       
         tk.Radiobutton(self.root, text="按面积", variable=self.selected, value="面积",  selectcolor="yellow", command=self.on_radiobutton_select).pack()
         tk.Radiobutton(self.root, text="按体积", variable=self.selected, value="体积",  selectcolor="yellow", command=self.on_radiobutton_select).pack()    
         tk.Radiobutton(self.root, text="按自定义权重", variable=self.selected, value="权重", selectcolor="yellow", command=self.on_radiobutton_select).pack()
@@ -224,7 +224,7 @@ class RevitToDB:
                 volume_total += float(valuesnew[8])
             elif distribute_method == "权重":
                 quantiles_total += float(valuesnew[9])
-            else:
+        else:
                 self.status_bar.config(text="未选择分配方式")
                 return
 
@@ -256,7 +256,7 @@ class RevitToDB:
             self.tree.item(item, values=valuesnew)  # Update the tree item with the modified list
             print(valuesnew)
 
-        # 将Treeview中的数据逐项更新到revit_data
+                # 将Treeview中的数据逐项更新到revit_data
         self.revit_data = []
         for i, item in enumerate(self.tree.get_children()):
             values = self.tree.item(item, "values")
@@ -302,10 +302,10 @@ class RevitToDB:
                 )
             else:
                 # 如果不存在，则执行插入操作
-                db_ops.cursor.execute(
+            db_ops.cursor.execute(
                     "INSERT INTO BIM_DB (Revit构件Id, BIM元素ID, 清单项目编码, 本构件计划分配工程量, 综合单价) VALUES (?, ?, ?, ?, ?)",
                     (valuesnew[0], valuesnew[1], valuesnew[2], valuesnew[3], valuesnew[4])
-                )
+            )
             #将tree的该行文字颜色变为红色
             self.tree.item(item, tags=("red",))
             self.tree.tag_configure("red", foreground="red")  # 设置标签的颜色为红色
