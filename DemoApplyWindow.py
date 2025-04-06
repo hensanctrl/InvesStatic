@@ -2,6 +2,9 @@ from pydoc import text
 import tkinter as tk
 import tkinter.ttk as ttk
 from DatabaseOperations import DatabaseOperations
+import os
+import requests
+import webbrowser
 
 class applyWindow:
     """
@@ -9,7 +12,8 @@ class applyWindow:
     """
     def __init__(self):
         # 从数据库中读取数据并插入到Treeview控件中
-        self.db_ops = DatabaseOperations("创智湾.db", "G:\\创智湾BIM统计")
+        current_dir = os.path.dirname(os.path.abspath(__file__))+"\\创智湾BIM统计"
+        self.db_ops = DatabaseOperations("创智湾.db", current_dir)
         # 创建主窗口
         self.root = tk.Tk()
         self.root.title("模拟录入工程量")
@@ -66,7 +70,7 @@ class applyWindow:
         self.button_save_draft.pack(pady=3)
 
         # 在canvas11中增加按钮，标签为"申报数据AI体检"
-        self.button_ai_check = tk.Button(self.canvas11, text="申报数据AI体检", command=self.save_data)
+        self.button_ai_check = tk.Button(self.canvas11, text="申报数据AI体检", command=self.ai_check)
         self.button_ai_check.pack(pady=3)
 
         # 在canvas11中增加按钮，标签为"本期申报上传"
@@ -159,6 +163,126 @@ class applyWindow:
 
 
         pass
+    def save_data(self):
+        pass
+    def ai_check(self):
+        #将数据库中的视图"按构件及清单聚合进度视图"中的数据，输出到一个Excel文件中
+        # 读取数据
+        return 
+
+        self.db_ops.connect()
+        db_data = self.db_ops.get_data("历次申报记录")
+        self.db_ops.close()
+        # 创建Excel文件
+        import pandas as pd
+        df = pd.DataFrame(db_data)
+        # 保存为Excel文件,文件存在当前运行程序所在文件夹，文件名为当前日期时间加上"按构件及清单聚合进度视图.xlsx"
+        import datetime
+        now = datetime.datetime.now()
+        date_str = now.strftime("%Y%m%d_%H%M%S")
+        # 文件名为当前日期时间加上"按构件及清单聚合进度视图.xlsx"
+        output_path = os.path.join(os.getcwd(), f"历次申报记录_{date_str}.xlsx")       
+        df.to_excel(output_path, index=False)
+
+        # 配置腾讯元宝 API 的基础信息
+        API_KEY = "你的腾讯元宝API_KEY"
+        BASE_URL = "https://api.tencentyuanbao.com/v1"  # 假设的 API 地址，具体请参考实际文档
+        MODEL_NAME = "hunyuan-turbo-s"  # 使用混元 Turbo S 模型[^11^]
+        check_instructions="从上传的excel表格中，按照“已完成百分比”作为施工进度，从单位工程、项目名称_小组名、项目名称、项目特征来分析，该施工进度是否合理，是否符合工程实际情况？，施工工序有客观要求，比如先有低层，再有高层；先有管道安装，再有抗震支吊架；等等。请从此角度，再次分析上传文件各工序的合理性。"
+        self.upload_to_tencent_yuanbao(output_path,check_instructions)
+ 
+# 函数：上传 Excel 文件并获取分析结果
+    def analyze_excel_file(self,file_path):
+        # 检查文件是否存在
+        if not os.path.exists(file_path):
+            print("文件不存在，请检查文件路径！")
+            return
+
+        # 打开文件并读取内容
+        with open(file_path, "rb") as file:
+            files = {"file": (os.path.basename(file_path), file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")}
+            headers = {"Authorization": f"Bearer {API_KEY}"}
+        
+            # 调用腾讯元宝 API 上传文件并请求分析
+            response = requests.post(
+                f"{BASE_URL}/file/upload", headers=headers, files=files
+            )
+        
+            if response.status_code == 200:
+                # 获取文件上传后的唯一标识符（假设 API 返回一个文件ID）
+                file_id = response.json().get("file_id")
+                print(f"文件上传成功，文件ID为：{file_id}")
+            
+                # 调用分析接口
+                analysis_response = requests.post(
+                    f"{BASE_URL}/file/analyze",
+                    headers=headers,
+                    json={"file_id": file_id, "model": MODEL_NAME}
+                )
+            
+                if analysis_response.status_code == 200:
+                    # 获取分析结果
+                    analysis_result = analysis_response.json().get("analysis_result")
+                    print("分析结果已获取，正在保存到本地...")
+                
+                    # 将分析结果保存到本地文件
+                    result_file_path = "analysis_result.txt"
+                    with open(result_file_path, "w", encoding="utf-8") as result_file:
+                        result_file.write(analysis_result)
+                
+                    print(f"分析结果已保存到本地文件：{result_file_path}")
+                
+                    # 打开分析结果文件
+                    os.startfile(result_file_path)
+                else:
+                    print(f"分析失败，错误信息：{analysis_response.text}")
+            else:
+                print(f"文件上传失败，错误信息：{response.text}")
+
+
+            # print(f"数据已导出 {output_path}")
+            # check_instructions="从上传的excel表格中，按照“已完成百分比”作为施工进度，从单位工程、项目名称_小组名、项目名称、项目特征来分析，该施工进度是否合理，是否符合工程实际情况？，施工工序有客观要求，比如先有低层，再有高层；先有管道安装，再有抗震支吊架；等等。请从此角度，再次分析上传文件各工序的合理性。"
+                # self.upload_to_tencent_yuanbao(output_path, check_instructions)
+
+
+
+                pass
+
+    def upload_to_tencent_yuanbao(self,file_path, check_instructions):
+        # 假设腾讯元宝提供了一个文件上传的API
+        upload_url = "https://api.tencentyuanbao.com/upload"
+        check_url = "https://api.tencentyuanbao.com/check"
+
+        # 上传文件
+        with open(file_path, 'rb') as f:
+            files = {'file': f}
+            response = requests.post(upload_url, files=files)
+    
+
+        if response.status_code == 200:
+            print("文件上传成功")
+            file_id = response.json().get('file_id')
+        
+            # 请求检查
+            check_data = {
+                'file_id': file_id,
+                'instructions': check_instructions
+            }
+            check_response = requests.post(check_url, json=check_data)
+        
+            if check_response.status_code == 200:
+                print("检查请求成功")
+                report_url = check_response.json().get('report_url')
+            
+                # 打开检查报告
+                webbrowser.open(report_url)
+            else:
+                print("检查请求失败")
+        else:
+            print("文件上传失败")
+
+
+
 
     def update_treeview_filter(self, *args):
         # 获取self.filter_entry的值并转换为小写

@@ -5,6 +5,7 @@ from tkinter import messagebox, filedialog
 from DatabaseOperations import DatabaseOperations
 import ChartTools
 from DemoApplyWindow import applyWindow
+import os
 
 # 创建主窗口
 root = tk.Tk()
@@ -21,7 +22,8 @@ position_right = int(screen_width / 2 - window_width / 2)
 root.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
 
 # 项目默认设置
-file_path = "G:\\创智湾BIM统计"
+
+file_path = os.path.dirname(os.path.abspath(__file__))+"创智湾BIM统计"
 project_name = "创智湾"
 db_name = "创智湾.db"
 

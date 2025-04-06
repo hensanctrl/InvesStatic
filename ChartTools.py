@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
+import os
 import tkinter as tk
 from DatabaseOperations import DatabaseOperations
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -10,7 +11,8 @@ class ChartTools:
     """
     def __init__(self):
         # 从数据库中读取数据并插入到Treeview控件中
-        self.db_ops = DatabaseOperations("创智湾.db", "G:\\创智湾BIM统计")
+        current_dir = os.path.dirname(os.path.abspath(__file__))+"创智湾BIM统计"
+        self.db_ops = DatabaseOperations("创智湾.db",current_dir)
 
         # 创建主窗口
         self.root = tk.Tk()

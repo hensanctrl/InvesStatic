@@ -1,5 +1,6 @@
 from cgitb import text
 from gc import enable
+import os
 from statistics import quantiles
 from sklearn.metrics import v_measure_score
 from sympy import false
@@ -132,7 +133,8 @@ class RevitToDB:
 
     def get_itemById(self,item,id):
         # 连接数据库并读取视图数据
-        db_ops2 = DatabaseOperations("创智湾.db", "G:\\创智湾BIM统计")
+        current_dir = os.path.dirname(os.path.abspath(__file__))+"创智湾BIM统计"
+        db_ops2 = DatabaseOperations("创智湾.db", current_dir)
         db_ops2.connect()
         #得到第一个匹配的“清单项目编码”
         db_ops2.cursor.execute("SELECT {} FROM 分部分项工程清单与计价表 WHERE 项目编码=?".format(item), (id,))
@@ -281,7 +283,8 @@ class RevitToDB:
         """
 
         """
-        db_ops = DatabaseOperations("创智湾.db", "G:\\创智湾BIM统计")
+        current_dir = os.path.dirname(os.path.abspath(__file__))+"创智湾BIM统计"
+        db_ops = DatabaseOperations("创智湾.db", current_dir)
         db_ops.connect()
         for i, item in enumerate(self.tree.get_children()):
             valuesnew = list(self.tree.item(item, "values"))  # Convert tuple to list
@@ -399,7 +402,8 @@ if __name__ == "__main__":
     print(df)
 
     # 创建DatabaseOperations对象
-    db_ops = DatabaseOperations("创智湾.db", "G:\\创智湾BIM统计")
+    current_dir = os.path.dirname(os.path.abspath(__file__))+"创智湾BIM统计"
+    db_ops = DatabaseOperations("创智湾.db", current_dir)
 
     # 将DataFrame数据插入到数据库中
     revit_to_db.RevitToDB(df, db_ops)

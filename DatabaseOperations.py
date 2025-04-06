@@ -116,7 +116,10 @@ class DatabaseOperations:
 
 # 示例用法
 if __name__ == "__main__":
-    db_ops = DatabaseOperations("创智湾.db", "G:\\创智湾BIM统计")
+
+    #获得当前程序的目录
+    current_dir = os.path.dirname(os.path.abspath(__file__))+"创智湾BIM统计"
+    db_ops = DatabaseOperations("创智湾.db", current_dir)
     db_ops.connect()
     db_ops.merge_list()
     db_ops.check_list()
