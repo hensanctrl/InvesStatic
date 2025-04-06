@@ -28,6 +28,14 @@ class DatabaseOperations:
         data = [dict(zip(columns, row)) for row in rows]
         return data
 
+    def get_data2(self, view_name):
+        query = f"SELECT * FROM {view_name} ORDER BY 单位工程 ASC"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+        columns = [description[0] for description in self.cursor.description]
+        data = [dict(zip(columns, row)) for row in rows]
+        return data
+
     def merge_list(self):
         # 实现合并分部分项清单的逻辑
         print("合并分部分项清单")

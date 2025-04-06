@@ -4,6 +4,7 @@ import BIMElementObject
 from tkinter import messagebox, filedialog
 from DatabaseOperations import DatabaseOperations
 import ChartTools
+from DemoApplyWindow import applyWindow
 
 # 创建主窗口
 root = tk.Tk()
@@ -99,7 +100,12 @@ def read_bim_schedule():
 def show_investment_progress():
     chartDiagram = ChartTools.ChartTools()
     chartDiagram.Show()
-    progress_text.insert(tk.END, "逐月显示投资进度\n")
+
+
+def show_demo_applyfor():
+    demoapplyWindow = applyWindow()
+    demoapplyWindow.Show()
+
 
 
 
@@ -112,7 +118,8 @@ buttons = [
     ("合并分部分项清单", merge_lists),
     ("读取单位工程费用表", read_cost_table),
     ("BIM构件工程量赋值", read_bim_schedule),
-    ("逐月显示投资进度", show_investment_progress)
+    ("逐月显示投资进度", show_investment_progress),
+    ("模拟申报", show_demo_applyfor)
 ]
 
 button_frame = tk.Frame(root)

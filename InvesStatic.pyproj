@@ -26,6 +26,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DatabaseOperations.py" />
+    <Compile Include="DemoApplyWindow.py" />
     <Compile Include="InvesStatic.py" />
     <Compile Include="RevitToDB.py" />
   </ItemGroup>
