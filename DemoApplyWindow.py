@@ -1,3 +1,4 @@
+from pydoc import text
 import tkinter as tk
 import tkinter.ttk as ttk
 from DatabaseOperations import DatabaseOperations
@@ -26,7 +27,7 @@ class applyWindow:
         # 增加一个Frame控件，作为主窗口的容器
         self.frame = tk.Frame(self.root)
         self.frame.pack(expand=True, fill=tk.BOTH)
-        # 创建Grid，分为2行1列
+        # 创建Grid，分为1行2列
         self.canvas11 = tk.Canvas(self.frame, width=300, height=300, bg='white')
         self.canvas11.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
@@ -34,51 +35,66 @@ class applyWindow:
         self.canvas21.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
         # 在canvas11中增加一个标签和一个可编辑的Listbox控件，标签为"申报期"，Listbox控件中显示"202503"、"202504"
-        self.label = tk.Label(self.canvas11, text="申报期")
-        self.label.pack(pady=10)
-        self.listbox = tk.Listbox(self.canvas11, height=2)  # 设置高度为2行
-        self.listbox.pack(pady=10)
-        self.listbox.insert(0, "202503")
-        self.listbox.insert(1, "202504")
+        self.label_period = tk.Label(self.canvas11, text="申报期")
+        self.label_period.pack(pady=10)
+        self.listbox_period = tk.Listbox(self.canvas11, height=2)  # 设置高度为2行
+        self.listbox_period.pack(pady=10)
+        self.listbox_period.insert(0, "202503")
+        self.listbox_period.insert(1, "202504")
 
         # 在canvas11中增加一个标签和一个可编辑的Entry控件，标签为"申报人"，Entry控件中显示"张三"
-        self.label = tk.Label(self.canvas11, text="申报人")
-        self.label.pack(pady=3)
-        self.entry = tk.Entry(self.canvas11)
-        self.entry.pack(pady=3)
-        self.entry.insert(0, "张三")
-        # 在canvas11中增加一个标签和一个可编辑的Entry控件，标签为"申报项目"，Entry控件中显示"创智湾"
-        self.label = tk.Label(self.canvas11, text="申报单位")
-        self.label.pack(pady=3)
-        self.entry = tk.Entry(self.canvas11)
-        self.entry.pack(pady=3)
-        self.entry.insert(0, "创智湾")
+        self.label_applicant = tk.Label(self.canvas11, text="申报人")
+        self.label_applicant.pack(pady=3)
+        self.entry_applicant = tk.Entry(self.canvas11)
+        self.entry_applicant.pack(pady=3)
+        self.entry_applicant.insert(0, "张三")
+        # 在canvas11中增加一个标签和一个可编辑的Entry控件，标签为"申报单位"，Entry控件中显示"创智湾"
+        self.label_unit = tk.Label(self.canvas11, text="申报单位")
+        self.label_unit.pack(pady=3)
+        self.entry_unit = tk.Entry(self.canvas11)
+        self.entry_unit.pack(pady=3)
+        self.entry_unit.insert(0, "创智湾")
         # 在canvas11中增加一个标签和一个可编辑的Entry控件，标签为"申报人单位"，Entry控件中显示"湖州经开"
-        self.label = tk.Label(self.canvas11, text="申报人单位")
-        self.label.pack(pady=3)
-        self.entry = tk.Entry(self.canvas11)
-        self.entry.pack(pady=3)
-        self.entry.insert(0, "湖州经开")
+        self.label_applicant_unit = tk.Label(self.canvas11, text="申报人单位")
+        self.label_applicant_unit.pack(pady=3)
+        self.entry_applicant_unit = tk.Entry(self.canvas11)
+        self.entry_applicant_unit.pack(pady=3)
+        self.entry_applicant_unit.insert(0, "湖州经开")
 
         # 在canvas11中增加按钮，标签为"暂存为草稿"
-        self.button = tk.Button(self.canvas11, text="暂存为草稿", command=self.save_data)
-        self.button.pack(pady=3)
+        self.button_save_draft = tk.Button(self.canvas11, text="暂存为草稿", command=self.save_data)
+        self.button_save_draft.pack(pady=3)
 
         # 在canvas11中增加按钮，标签为"申报数据AI体检"
-        self.button = tk.Button(self.canvas11, text="申报数据AI体检", command=self.save_data)
-        self.button.pack(pady=3)
+        self.button_ai_check = tk.Button(self.canvas11, text="申报数据AI体检", command=self.save_data)
+        self.button_ai_check.pack(pady=3)
 
         # 在canvas11中增加按钮，标签为"本期申报上传"
-        self.button = tk.Button(self.canvas11, text="本期申报上传", command=self.save_data)
-        self.button.pack(pady=3)
+        self.button_upload = tk.Button(self.canvas11, text="本期申报上传", command=self.save_data)
+        self.button_upload.pack(pady=3)
 
         # 在canvas11 中增加一个groupbox控件，标签为"批量操作". 内部增加一个按钮，按钮标签为"批量申报为100%进度"
-        self.groupbox = tk.LabelFrame(self.canvas11, text="批量操作", padx=10, pady=10)
-        self.groupbox.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-        self.button = tk.Button(self.groupbox, text="批量申报为100%进度", command=self.batch_apply_100)
-        self.button.pack(pady=10)
+        self.groupbox_batch = tk.LabelFrame(self.canvas11, text="批量操作", padx=10, pady=10)
+        self.groupbox_batch.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        self.button_batch_apply = tk.Button(self.groupbox_batch, text="批量申报为100%进度", command=self.batch_apply_100)
+        self.button_batch_apply.pack(pady=10)
 
-        # 在canvas21中增加一个TreeView控件
+        # 在canvas21中增加一个entry控件
+        self.filter_var = tk.StringVar()
+        self.filter_var.trace("w", self.update_treeview_filter)
+        self.filter_entry = tk.Entry(self.canvas21, textvariable=self.filter_var,bg="yellow")
+        self.filter_entry.insert(0, "请输入过滤条件")
+        # 设置过滤条件的默认值为"请输入过滤条件"
+        self.filter_entry.bind("<FocusIn>", lambda event: self.filter_entry.delete(0, tk.END) if self.filter_entry.get() == "请输入过滤条件" else None)
+        self.filter_entry.bind("<FocusOut>", lambda event: self.filter_entry.insert(0, "请输入过滤条件") if not self.filter_entry.get() else None)
+
+
+        self.filter_entry.pack(pady=10)
+
+        # 在canvas21中增加一个按钮，标签为"按过滤器显示"
+        self.button_filter = tk.Button(self.canvas21, text="按过滤器显示", command=self.update_treeview_filter)
+        self.button_filter.pack(pady=5)
+
         self.tree = ttk.Treeview(self.canvas21, columns=("col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8"), show='headings')
         self.tree.heading("col1", text="BIM元素ID", command=lambda: self.sort_treeview("col1", False))
         self.tree.heading("col2", text="清单项目编码", command=lambda: self.sort_treeview("col2", False))
@@ -102,8 +118,8 @@ class applyWindow:
 
         # 从数据库中获取数据并插入到TreeView中
         self.db_ops.connect()
-        data = self.db_ops.get_data2("按构件及清单聚合进度视图")
-        for row in data:
+        self.data = self.db_ops.get_data2("按构件及清单聚合进度视图")
+        for row in self.data:
             self.tree.insert("", "end", values=(row["BIM元素ID"], row["清单项目编码"], row["累计完成工程量"], row["剩余未完成工程量"], "", "", row["已完成百分比"], ""))
         self.db_ops.close()
         # 设置self.tree的行高为40
@@ -129,6 +145,36 @@ class applyWindow:
         # 在Treeview中插入进度条
         self.root.after(100, self.insert_progressbars)  # 延迟调用 insert_progressbars
 
+
+    def update_treeview_filterByBIMid(self, bimIdlist):
+        #传入的bimidlist是一个列表，包含了一系列BIM元素ID
+        # 在此处增加判断函数，若bimidlist为空，则不进行过滤
+        if not bimIdlist:
+            return
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+            for row in self.data:
+                if row["BIM元素ID"] in bimIdlist:
+                    self.tree.insert("", "end", values=(row["BIM元素ID"], row["清单项目编码"], row["累计完成工程量"], row["剩余未完成工程量"], "", "", row["已完成百分比"], ""))
+
+
+        pass
+
+    def update_treeview_filter(self, *args):
+        # 获取self.filter_entry的值并转换为小写
+        filter_text = self.filter_entry.get().lower()
+        print(f"Filter text: {filter_text}")  # 调试信息
+
+        # 在此处增加判断函数，若filter_text为空，则不进行过滤
+        if not filter_text:
+            return
+
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        for row in self.data:
+            if filter_text in row["BIM元素ID"].lower() or filter_text in row["清单项目编码"].lower():
+                self.tree.insert("", "end", values=(row["BIM元素ID"], row["清单项目编码"], row["累计完成工程量"], row["剩余未完成工程量"], "", "", row["已完成百分比"], ""))
+
     def on_mouse_move(self, event):
         # 获取鼠标所在行
         item = self.tree.identify_row(event.y)
@@ -138,7 +184,6 @@ class applyWindow:
                 col1_value = values[0]
                 col2_value = values[1]
                 self.statusbar.config(text=f"第1列: {col1_value}, 第2列: {col2_value}")
-
 
     def batch_apply_100(self):
         #将treeview中处于选中状态的行，第5列的值设置为第4列的值，并将第6列的值设置为1-第7列的值

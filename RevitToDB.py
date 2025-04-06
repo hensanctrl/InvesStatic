@@ -1,7 +1,6 @@
 from cgitb import text
 from gc import enable
 from statistics import quantiles
-
 from sklearn.metrics import v_measure_score
 from sympy import false
 import BIMElementObject
@@ -302,10 +301,10 @@ class RevitToDB:
                 )
             else:
                 # 如果不存在，则执行插入操作
-            db_ops.cursor.execute(
-                    "INSERT INTO BIM_DB (Revit构件Id, BIM元素ID, 清单项目编码, 本构件计划分配工程量, 综合单价) VALUES (?, ?, ?, ?, ?)",
-                    (valuesnew[0], valuesnew[1], valuesnew[2], valuesnew[3], valuesnew[4])
-            )
+                db_ops.cursor.execute(
+                        "INSERT INTO BIM_DB (Revit构件Id, BIM元素ID, 清单项目编码, 本构件计划分配工程量, 综合单价) VALUES (?, ?, ?, ?, ?)",
+                        (valuesnew[0], valuesnew[1], valuesnew[2], valuesnew[3], valuesnew[4])
+                )
             #将tree的该行文字颜色变为红色
             self.tree.item(item, tags=("red",))
             self.tree.tag_configure("red", foreground="red")  # 设置标签的颜色为红色
